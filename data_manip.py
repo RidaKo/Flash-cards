@@ -1,10 +1,10 @@
 import pandas as pd
 import random
 
-class WordGenerator():
+class WordManager():
     """
         ## Word generator class
-        Creates a word generators object
+        Creates a word manager object
         The objects primary function is to manipulate words
     """
     def __init__(self) -> None:
@@ -16,12 +16,26 @@ class WordGenerator():
         """
         Returns a DataFrame object that is filled with all words
         """
-        with open("french_words.csv", "r" ) as data_file:
+        try:
+            data_file = open("data/words_to_learn.csv" ,"r")
             words = pd.read_csv(data_file)
+
+        except(FileNotFoundError,pd.errors.EmptyDataError) as error:
+            
+            if error == pd.errors.EmptyDataError:
+                print("You have learned all the words or the file has been corrupt.\n Starting over")
+            elif error == FileNotFoundError:
+                print("File with your records has not been found inserting default file.")
+
+            data_file = open("data/french_words.csv" ,"r")
+            words = pd.read_csv(data_file)
+        finally:     
+            data_file.close()
             return words
+        
     
     def remove_words_and_write_to_learnt_file(self) ->None:
-        with open("words_to_learn.csv", "w") as word_file:
+        with open("data/words_to_learn.csv", "w") as word_file:
             for word in self.words_to_learn["French"]:
                 if word == self.word_pair["French"]:
                     # getting the index of the element based on the condition
